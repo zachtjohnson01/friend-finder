@@ -104,9 +104,7 @@
         };
 
         $(".container").on("click",`.answer`,function(value) {
-
             $(this).parent().parent().parent().attr('data',value.target.innerHTML);
-
             for (i=0; i < 10; i++) {
                 a = $(`#questionWell-${i+1}`).attr("data");
                 answersArray.splice(i,1,a); 
@@ -116,29 +114,67 @@
 
         $(".container").on("click", ".submit",function(event) {
             event.preventDefault();
-
             var friend = {
                 name: $("#friend-name").val().trim(),
                 uniqueId: $("#friend-unique-id").val().trim(),
                 quizAnswers: answersArray
-            }
-            console.log(friend);
-
+            };
+            // console.log(friend);
             $.post("/api/surveyResults", friend, function(data) {
                 if (data) {
                     console.log("Submitted Successfully");
                 } else {
                     console.log("Something went wrong");
                 }
-
                 $("#friend-name").val("");
                 $("friend-unique-id").val("");
                 answersArray = [0,0,0,0,0,0,0,0,0,0];
-            })
-        })
+            });
+            $.get("/api/surveyResults", function(data) {
+                // console.log(data);
+                var otherUserAnswers;
+                var currentUserAnswers;
+                var differenceArray = [];
+                var differenceSum;
+                var allDifferencesArray = [];
+                for(i=0;i<data.length;i++) {
+                    otherUserAnswers = data[i].quizAnswers;
+                    currentUserAnswers = friend.quizAnswers;
+                    console.log(`otherUserAnswers ${data[i].name} - ${otherUserAnswers}`);
+                    console.log(`currentUserAnswers ${friend.name} - ${currentUserAnswers}`);
+                    for (j=0;j < currentUserAnswers.length; j++) {
+                        differenceArray.push(Math.abs(+currentUserAnswers[j] - +otherUserAnswers[j]))
+                    }
+                    console.log(`${data[i].name} vs. ${friend.name}`);
+                    console.log(differenceArray);
+                    differenceSum = differenceArray.reduce(function(a,b) {
+                        return a + b;
+                    }, 0);
+                    console.log(`Difference Sum: ${differenceSum}`);
+                    console.log("-----");
+                    allDifferencesArray.push(differenceSum)
+                    console.log(`All Differences Array: ${allDifferencesArray}`)
+                    winningFriend = allDifferencesArray.reduce(function(a,b) {
+                        if (a < b) {
+                            return a
+                        } else if (b < a) {
+                            return b
+                        } else {
+                            return "error"
+                        }
+                    });
+                    console.log(`Winning Difference: ${winningFriend}`)
+                    differenceArray = [];
+                    differenceSum = 0;
+                }
 
+                // data.foreach(function(element) {
+                //     console.log(element)
+                // });
+                // console.log(friend.quizAnswers);
+            })
+        });
         runQuestionsQuery();
     </script>
-
     </body>
 </html>
