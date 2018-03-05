@@ -131,47 +131,74 @@
                 answersArray = [0,0,0,0,0,0,0,0,0,0];
             });
             $.get("/api/surveyResults", function(data) {
-                // console.log(data);
-                var otherUserAnswers;
-                var currentUserAnswers;
-                var differenceArray = [];
-                var differenceSum;
-                var allDifferencesArray = [];
-                for(i=0;i<data.length;i++) {
-                    otherUserAnswers = data[i].quizAnswers;
-                    currentUserAnswers = friend.quizAnswers;
-                    console.log(`otherUserAnswers ${data[i].name} - ${otherUserAnswers}`);
-                    console.log(`currentUserAnswers ${friend.name} - ${currentUserAnswers}`);
-                    for (j=0;j < currentUserAnswers.length; j++) {
-                        differenceArray.push(Math.abs(+currentUserAnswers[j] - +otherUserAnswers[j]))
-                    }
-                    console.log(`${data[i].name} vs. ${friend.name}`);
-                    console.log(differenceArray);
-                    differenceSum = differenceArray.reduce(function(a,b) {
-                        return a + b;
-                    }, 0);
-                    console.log(`Difference Sum: ${differenceSum}`);
-                    console.log("-----");
-                    allDifferencesArray.push(differenceSum)
-                    console.log(`All Differences Array: ${allDifferencesArray}`)
-                    winningFriend = allDifferencesArray.reduce(function(a,b) {
-                        if (a < b) {
-                            return a
-                        } else if (b < a) {
-                            return b
-                        } else {
-                            return "error"
+                if (!data) {
+                    console.log("Please Enter Name")
+                } else {
+                    var otherUserAnswers;
+                    var currentUserAnswers;
+                    var differenceArray = [];
+                    var differenceObj = 
+                        {
+                            comparison: "",
+                            currentPerson: 
+                                {
+                                    name: "",
+                                    array: []
+                                }
+                            ,
+                            otherPerson: 
+                                {
+                                    name: "",
+                                    array: []
+                                }
+                            ,
+                            differences: [],
+                            differencesTotal: 0
                         }
-                    });
-                    console.log(`Winning Difference: ${winningFriend}`)
-                    differenceArray = [];
-                    differenceSum = 0;
+                    ;
+                    var differenceSum;
+                    var allDifferencesArray = [];
+                    for(i=0;i<data.length;i++) {
+                        differenceObj.currentPerson.name = friend.name;
+                        differenceObj.currentPerson.array = friend.quizAnswers;
+                        differenceObj.otherPerson.name = data[i].name;
+                        differenceObj.otherPerson.array = data[i].quizAnswers;
+                        differenceObj.comparison = (`${differenceObj.currentPerson.name} vs. ${data[i].name}`);
+                        for (j=0;j < differenceObj.currentPerson.array.length; j++) {
+                            differenceArray.push(Math.abs(+differenceObj.currentPerson.array[j] - +differenceObj.otherPerson.array[j]))
+                        }
+                        differenceObj.differences = differenceArray;
+                        differenceArray = [];
+                        differenceObj.differencesTotal = differenceObj.differences.reduce(function(a,b) {
+                            return a + b;
+                        }, 0);
+                        if (differenceObj.currentPerson.name !== data[i].name) {
+                            allDifferencesArray.push(differenceObj);
+                        };
+                        // console.log(differenceObj);
+                        differenceObj = {
+                            comparison: "",
+                            currentPerson: 
+                                {
+                                    name: "",
+                                    array: []
+                                }
+                            ,
+                            otherPerson: 
+                                {
+                                    name: "",
+                                    array: []
+                                }
+                            ,
+                            differences: [],
+                            differencesTotal: 0
+                        };
+                    }
+                    // console.log(allDifferencesArray);
+                    var res = Math.min.apply(Math,allDifferencesArray.map(function(o){return o.differencesTotal; }));
+                    var obj = allDifferencesArray.find(function(o){ return o.differencesTotal == res; })
+                    alert(`Winning Friend: ${obj.otherPerson.name}`);
                 }
-
-                // data.foreach(function(element) {
-                //     console.log(element)
-                // });
-                // console.log(friend.quizAnswers);
             })
         });
         runQuestionsQuery();

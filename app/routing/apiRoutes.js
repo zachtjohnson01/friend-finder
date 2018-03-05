@@ -10,6 +10,10 @@ module.exports = function(app) {
         res.json(friendsData);
     });
     app.post("/api/surveyResults", function(req,res) {
-        friendsData.push(req.body);
+        if (!req.body) {
+            return false
+        } else {
+            friendsData.push(req.body);
+        }
     });
 };
