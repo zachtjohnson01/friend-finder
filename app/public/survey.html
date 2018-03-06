@@ -21,7 +21,7 @@
                             <h4 class="panel-title">Friend Finder Survey</h4>
                         </div>
                         <div class="panel-body">
-                            <form role="form">
+                            <form role="form" id="friend-form">
                                 <div class="form-group">
                                     <label for="friend-name">Name</label>
                                     <input type="text" class="form-control" id="friend-name">
@@ -38,8 +38,6 @@
             <div class='row'>
                 <div class="col-md-12">
                     <div id="questionSection">
-                    </div>
-                    <div id="answerSection">
                     </div>
                 </div>
             </div>
@@ -90,26 +88,42 @@
 
                     $(`#questionWell-${questionNumber}`).append(
                         `<div class="row">
-                            <div class="col-md-12">
-                                <div class="col-sm-2 col-sm-offset-1 answer_rank btn btn-primary answer answer${questionNumber}-1">1</div>
-                                <div class="col-sm-2 answer_rank btn btn-primary answer answer${questionNumber}-2">2</div>
-                                <div class="col-sm-2 answer_rank btn btn-primary answer answer${questionNumber}-3">3</div>
-                                <div class="col-sm-2 answer_rank btn btn-primary answer answer${questionNumber}-4">4</div>
-                                <div class="col-sm-2 answer_rank btn btn-primary answer answer${questionNumber}-5">5</div>
-                            </div>
+                            <div class="col-sm-2 col-sm-offset-1 answer_rank btn btn-primary answer answer${questionNumber}-1">Strongly Disagree</div>
+                            <div class="col-sm-2 answer_rank btn btn-primary answer answer${questionNumber}-2">Disagree</div>
+                            <div class="col-sm-2 answer_rank btn btn-primary answer answer${questionNumber}-3">Undecided</div>
+                            <div class="col-sm-2 answer_rank btn btn-primary answer answer${questionNumber}-4">Agree</div>
+                            <div class="col-sm-2 answer_rank btn btn-primary answer answer${questionNumber}-5">Strongly Agree</div>
                         </div>`
                     );
                 }
             });
         };
 
-        $(".container").on("click",`.answer`,function(value) {
-            $(this).parent().parent().parent().attr('data',value.target.innerHTML);
+        $(".container").on("click",`.answer`,function(event) {
+            var responseRank;
+            if (event.target.innerHTML === "Strongly Disagree") {
+                responseRank = 1
+            } else if (event.target.innerHTML === "Disagree") {
+                responseRank = 2
+            } else if (event.target.innerHTML === "Undecided") {
+                responseRank = 3
+            } else if (event.target.innerHTML === "Agree") {
+                responseRank = 4
+            } else if (event.target.innerHTML === "Strongly Agree") {
+                responseRank = 5
+            };
+            $(this).parent().parent().attr('data',responseRank);
             for (i=0; i < 10; i++) {
                 a = $(`#questionWell-${i+1}`).attr("data");
                 answersArray.splice(i,1,a); 
-            }
+            };
             console.log(answersArray);
+            if ($(this).siblings().hasClass('btn-danger')) {
+                $(this).siblings().removeClass('btn-danger').addClass("btn-primary");
+                $(this).addClass("btn-danger");
+            } else {
+                $(this).removeClass("btn-primary").addClass("btn-danger");
+            };
         });
 
         $(".container").on("click", ".submit",function(event) {
@@ -119,7 +133,6 @@
                 uniqueId: $("#friend-unique-id").val().trim(),
                 quizAnswers: answersArray
             };
-            // console.log(friend);
             $.post("/api/surveyResults", friend, function(data) {
                 if (data) {
                     console.log("Submitted Successfully");
@@ -175,7 +188,6 @@
                         if (differenceObj.currentPerson.name !== data[i].name) {
                             allDifferencesArray.push(differenceObj);
                         };
-                        // console.log(differenceObj);
                         differenceObj = {
                             comparison: "",
                             currentPerson: 
@@ -193,13 +205,14 @@
                             differences: [],
                             differencesTotal: 0
                         };
-                    }
-                    // console.log(allDifferencesArray);
+                    };
+                    console.log(allDifferencesArray);
                     var res = Math.min.apply(Math,allDifferencesArray.map(function(o){return o.differencesTotal; }));
                     var obj = allDifferencesArray.find(function(o){ return o.differencesTotal == res; })
                     alert(`Winning Friend: ${obj.otherPerson.name}`);
-                }
-            })
+                };
+                $("#friend-form")[0].reset();
+            });
         });
         runQuestionsQuery();
     </script>
