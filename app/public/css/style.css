@@ -1,0 +1,18 @@
+body {
+    background-image: url("../images/ian-dooley-407846-unsplash_1.jpg");
+    background-size: auto;
+    background-repeat: no-repeat;
+    background-position: 50% 30%;
+    background-attachment: fixed;
+}
+
+.container {
+    height:80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.jumbotron {
+    background-color: transparent;
+}

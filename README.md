@@ -6,11 +6,14 @@ A full stack compatibility-based "Friend Finder" application
 
 1. Enter the site
 
+<img src="app/public/images/home_screen.png?raw=true" alt="Friend Finder Background" width="500px" />
+
 2. Complete the survey
+
+<img src="app/public/images/survey_screen.png?raw=true" alt="Friend Finder Background" width="500px" />
 
 3. Get matched with a like-minded person from our Friend Finder database
 
-<img src="images/purchase_1.gif?raw=true" alt="Customer Order" width="500px" />
 
 ## Getting Started
 
@@ -18,7 +21,7 @@ A full stack compatibility-based "Friend Finder" application
 ### Prerequisites
 
 1. [Node.js](https://nodejs.org/en/)
-2. [npm] (https://www.npmjs.com/get-npm)
+2. [npm](https://www.npmjs.com/get-npm)
 
 ### Installing
 
@@ -45,3 +48,5 @@ A full stack compatibility-based "Friend Finder" application
 ## Acknowledgments
 
 * Made as a part of the Northwestern University Fall 2017 Coding Program
+
+* Photo from [Unsplash](https://unsplash.com/@nativemello)
