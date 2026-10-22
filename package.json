@@ -20,7 +20,7 @@
   "homepage": "https://github.com/zachtjohnson01/friend-finder#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
-    "express": "4.21.2",
+    "express": "4.22.3",
     "path": "^0.12.7"
   }
 }
